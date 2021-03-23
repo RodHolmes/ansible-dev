@@ -1,0 +1,32 @@
+---
+- name: user Challenge
+  hosts: renamed:!taz
+  connection:  ssh
+  gather_facts: False
+
+  vars:
+          my_name: Rod
+
+  tasks:
+
+  # create a new group
+  - name: Create the new group funkytown
+    group:
+      name: funkytown
+      state: present
+    become: yes
+
+  # create new user on target system
+  - name: Add user {{ my_name }} with group of 'funkytown'
+    user:
+      name: "{{ my_name }}"
+      comment: "Me"
+      # password: alta3      # pass as hash
+      state: present
+      shell: /bin/bash       # Defaults to /bin/bash
+      system: no             # Defaults to no
+      createhome: yes        # Defaults to yes
+      # home: /home/exampleuser  # Defaults to /home/<username>
+      group: funkytown
+    become: yes            
+
