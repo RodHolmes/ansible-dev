@@ -1,0 +1,65 @@
+---
+- name: Day 5 Challenge
+  hosts: planetexpress
+
+  vars_prompt:
+          - name: "password"
+            prompt: "Password?"
+            private: yes
+
+  vars:
+          apod_url = "https://api.nasa.gov/planetary/apod?api_key=tFXI8wD5RLHE84WEvtZg8MdkychOZn0bV4T6sgM4"
+          apod_url_video = "https://api.nasa.gov/planetary/apod?api_key=tFXI8wD5RLHE84WEvtZg8MdkychOZn0bV4T6sgM4&date=2020-09-29"
+
+  block:
+    tasks:
+    - name: put password in a password file
+      hosts: localhost
+      shell: echo $password > vars/creds
+
+    - name: encrypt the password file
+      hosts: localhost
+      shell: ansible-vault encrypt vars/creds
+
+    rescue:
+        # do not want an unencrypted password hanging around
+        # so, if the password file is not encrypted
+        #   delete it
+        #   throw a warning
+        #   and keep going
+      tasks:
+      - name: Delete the file
+        become: true
+        file:
+                path: vars/creds
+                state: absent
+
+      - name: Throw a Warning
+        debug:
+                msg: "Failed to encrypt vars/creds -- file removed"
+
+  tasks:
+  - name: precheck the URL
+    uri:
+      url: "{{ apod_url }}"
+      return_content: yes
+      register: url
+      assert:
+              $url != ""
+      assert:
+              "you_tube" is not in url.content
+      #      failed_when: "'youtube' is in url.content"
+
+
+  - name: display the URL
+    debug:
+      var: url.json.url
+
+  - name: get the picture
+    get_url:
+
+
+          - name: save the apod file
+
+
+

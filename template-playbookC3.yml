@@ -3,14 +3,16 @@
   hosts: planetexpress
   gather_facts: no   # runs the "setup" module on remote hosts
 
+  vars:
+          MissionControl:
+                  - mission: primary
+                    planet: luna park
+                  - mission: secondary
+                    planet: cineplex 14
+
   tasks:
     - name: Configure mission orders
       template:
         src: templates/mission-orders.txt.j2
         dest: ~/{{ item.mission }}-mission-orders.txt
-      loop: 
-        - mission: primary
-          planet: luna park
-        - mission: secondary
-          planet: cineplex 14
-
+      loop: "{{ MissionControl }}"

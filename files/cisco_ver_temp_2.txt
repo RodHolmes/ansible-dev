@@ -1,0 +1,9 @@
+Value Uptime (.*)
+Value Version (.*?)
+Value ReloadTime (.*)
+
+Start
+  ^Cisco IOS Software.*Version ${Version},
+  ^.*uptime is ${Uptime}
+  ^System restarted at ${ReloadTime}
+
